@@ -4,6 +4,6 @@
     "type": "project",
     "minimum-stability": "stable",
     "config": {
-	      "process-timeout": 1800
+	"process-timeout": 1800
     }
 }
