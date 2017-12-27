@@ -1,0 +1,1 @@
+# thumbGetter.js
