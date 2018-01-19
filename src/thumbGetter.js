@@ -1,18 +1,11 @@
 "use strict";
 
 let thumbGetter = {
-    handleFileSelect: function(e, element, saveTo, settings = {maxHeight: 100, maxWidth: 100, imageQuality: 0.9})
+    handleImageSelect: function(file, element, toBlobCallback, settings = {maxHeight: 100, maxWidth: 100, imageQuality: 0.9})
     {
-        let canvas = element.nextAll('canvas');
-        if (canvas.lenght) {
-            canvas = canvas[0];
-        } else {
-            canvas = document.createElement('canvas');
-        }
-
-        let image = new Image(),
+        let canvas = document.createElement('canvas'),
+            image = new Image(),
             ctx = canvas.getContext('2d'),
-            file = e.target.files[0],
             URL = window.URL || window.webkitURL,
             imgLoadHandler = function () {
                 let newWidth, newHeight;
@@ -31,9 +24,7 @@ let thumbGetter = {
 
                 ctx.drawImage(image, 0, 0, newWidth, newHeight);
 
-                canvas.toBlob(function (blob) {
-                    saveTo.push({thumb: blob});
-                }, 'image/jpeg', settings.imageQuality)
+                canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality)
 
                 URL.revokeObjectURL(image.src);
             };
@@ -43,10 +34,35 @@ let thumbGetter = {
         }
 
         let imageUrl = URL.createObjectURL(file);
-        element.attr('src', imageUrl);
+        element.get(0).src = imageUrl;
         image.src = imageUrl;
 
         image.onload = imgLoadHandler;
+
+        return canvas;
+    },
+
+    handleVideoSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
+    {
+        let video = element.get(0),
+            canvas = document.createElement('canvas'),
+            URL = window.URL || window.webkitURL;
+
+        video.onloadeddata = function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+            canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+        };
+
+        if (!URL) {
+            return false;
+        }
+
+        let videoUrl = URL.createObjectURL(file);
+        video.src = videoUrl;
+        video.currentTime = 10;
 
         return canvas;
     }
