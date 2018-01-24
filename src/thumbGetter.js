@@ -65,5 +65,30 @@ let thumbGetter = {
         video.currentTime = 10;
 
         return canvas;
+    },
+
+    handleDocumentSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
+    {
+        let doc = element.get(0),
+            canvas = document.createElement('canvas'),
+            URL = window.URL || window.webkitURL;
+
+        video.onloadeddata = function() {
+            canvas.width = doc.width;
+            canvas.height = doc.height;
+            canvas.getContext('2d').drawImage(video, 0, 0, doc.width, doc.height);
+
+            canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+        };
+
+        if (!URL) {
+            return false;
+        }
+
+        let docUrl = URL.createObjectURL(file);
+        doc.src = docUrl;
+        doc.currentTime = 10;
+
+        return canvas;
     }
 }
