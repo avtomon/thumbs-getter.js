@@ -12,21 +12,21 @@ let thumbGetter = {
 
                 if (this.height > this.width) {
                     newHeight = settings.maxHeight;
-                    newWidth = image.width * newHeight / image.height;
+                    newWidth = this.width * newHeight / this.height;
                 } else {
                     newWidth = settings.maxWidth;
-                    newHeight = image.height * newWidth / image.width;
+                    newHeight = this.height * newWidth / this.width;
                 }
 
                 canvas.width = newWidth;
                 canvas.height = newHeight;
                 canvas.style.display = 'block';
 
-                ctx.drawImage(image, 0, 0, newWidth, newHeight);
+                ctx.drawImage(this, 0, 0, newWidth, newHeight);
 
                 canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality)
 
-                URL.revokeObjectURL(image.src);
+                URL.revokeObjectURL(this.src);
             };
 
         if (!URL) {
@@ -49,11 +49,13 @@ let thumbGetter = {
             URL = window.URL || window.webkitURL;
 
         video.onloadeddata = function() {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            canvas.width = this.videoWidth;
+            canvas.height = this.videoHeight;
+            canvas.getContext('2d').drawImage(this, 0, 0, this.videoWidth, this.videoHeight);
 
-            canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+            canvas.toBlob(function (blob) {
+                toBlobCallback(blob, canvas, video);
+            }, 'image/jpeg', settings.imageQuality);
         };
 
         if (!URL) {
@@ -73,12 +75,14 @@ let thumbGetter = {
             canvas = document.createElement('canvas'),
             URL = window.URL || window.webkitURL;
 
-        video.onloadeddata = function() {
-            canvas.width = doc.width;
-            canvas.height = doc.height;
-            canvas.getContext('2d').drawImage(video, 0, 0, doc.width, doc.height);
+        doc.onloadeddata = function() {
+            canvas.width = this.width;
+            canvas.height = this.height;
+            canvas.getContext('2d').drawImage(this, 0, 0, this.width, this.height);
 
-            canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+            canvas.toBlob(function (blob) {
+                toBlobCallback(blob, canvas, video);
+            }, 'image/jpeg', settings.imageQuality);
         };
 
         if (!URL) {
