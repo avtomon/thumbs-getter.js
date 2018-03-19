@@ -54,6 +54,7 @@ let thumbGetter = {
             canvas.getContext('2d').drawImage(this, 0, 0, this.videoWidth, this.videoHeight);
 
             canvas.toBlob(function (blob) {
+                video.currentTime = 0;
                 toBlobCallback(blob, canvas, video);
             }, 'image/jpeg', settings.imageQuality);
         };
@@ -64,34 +65,50 @@ let thumbGetter = {
 
         let videoUrl = URL.createObjectURL(file);
         video.src = videoUrl;
-        video.currentTime = 10;
+        video.currentTime = 5;
 
         return canvas;
     },
 
-    handleDocumentSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
+    handlePdfSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
     {
-        let doc = element.get(0),
+        let iframe = element.get(0),
             canvas = document.createElement('canvas'),
             URL = window.URL || window.webkitURL;
-
-        doc.onloadeddata = function() {
-            canvas.width = this.width;
-            canvas.height = this.height;
-            canvas.getContext('2d').drawImage(this, 0, 0, this.width, this.height);
-
-            canvas.toBlob(function (blob) {
-                toBlobCallback(blob, canvas, video);
-            }, 'image/jpeg', settings.imageQuality);
-        };
 
         if (!URL) {
             return false;
         }
 
-        let docUrl = URL.createObjectURL(file);
-        doc.src = docUrl;
-        doc.currentTime = 10;
+        let iframeUrl = URL.createObjectURL(file);
+        iframe.src = iframeUrl;
+
+        if (typeof pdfjsDistBuildPdf === "undefined") {
+            $.getScriptSync('/vendor/avtomon/pdf.js/build/dist/build/pdf.min.js')
+        }
+
+        window.PDFJS = pdfjsDistBuildPdf;
+
+        PDFJS.getDocument(iframeUrl)
+            .then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                    let viewport = page.getViewport(1);
+
+                    canvas.height = viewport.height < viewport.width ? viewport.height : viewport.width;
+                    canvas.width = viewport.width;
+
+                    var renderContext = {
+                        canvasContext: canvas.getContext('2d'),
+                        viewport: viewport
+                    };
+
+                    page.render(renderContext).then(function () {
+                        canvas.toBlob(function (blob) {
+                            toBlobCallback(blob, canvas, iframe);
+                        }, 'image/jpeg', settings.imageQuality);
+                    });
+                });
+            });
 
         return canvas;
     }
