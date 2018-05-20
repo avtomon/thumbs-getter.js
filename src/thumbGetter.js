@@ -1,6 +1,16 @@
 "use strict";
 
 let thumbGetter = {
+    /**
+     * Формирование изображения из загруженного файла
+     *
+     * @param file - загруженный файл
+     * @param element - в какой элемент подгружаем изображение
+     * @param toBlobCallback - обработчик генерации блоба из загруженного файла
+     * @param settings - настройки
+     *
+     * @returns {*}
+     */
     handleImageSelect: function(file, element, toBlobCallback, settings = {maxHeight: 100, maxWidth: 100, imageQuality: 0.9})
     {
         let canvas = document.createElement('canvas'),
@@ -42,6 +52,16 @@ let thumbGetter = {
         return canvas;
     },
 
+    /**
+     * Формирование видео из загруженного файла
+     *
+     * @param file - загруженный файл
+     * @param element - в какой элемент подгружаем видео
+     * @param toBlobCallback - обработчик генерации блоба из загруженного файла
+     * @param settings - настройки
+     *
+     * @returns {*}
+     */
     handleVideoSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
     {
         let video = element.get(0),
@@ -70,6 +90,18 @@ let thumbGetter = {
         return canvas;
     },
 
+    /**
+     *
+     *
+     * Формирование PDF из загруженного файла
+     *
+     * @param file - загруженный файл
+     * @param element - в какой элемент подгружаем PDF
+     * @param toBlobCallback - обработчик генерации блоба из загруженного файла
+     * @param settings - настройки
+     *
+     * @returns {*}
+     */
     handlePdfSelect: function(file, element, toBlobCallback, settings = {imageQuality: 0.9})
     {
         let iframe = element.get(0),
