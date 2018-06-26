@@ -1,5 +1,5 @@
 {
-    "name": "avtomon/thumbGetter.js",
+    "name": "avtomon/thumbsGetter.js",
     "description": "Script for generate thumb from image in browser",
     "type": "project",
     "minimum-stability": "stable",
