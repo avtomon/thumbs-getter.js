@@ -2,10 +2,9 @@
 
 // noinspection TypeScriptPreferShortImport
 import {PDFJS, PDFPageViewport} from "./@types/pdfjs-dist/index";
+import {Utils} from "../../../GoodFuncs.js/src/ts/GoodFuncs.js";
 
 export namespace ImageGenerator {
-
-    import GoodFuncs = Utils.GoodFuncs;
 
     /**
      * Объект размеров изображения
@@ -223,7 +222,7 @@ export namespace ImageGenerator {
             iframe.src = iframeUrl;
 
             if (typeof PDFJS === "undefined") {
-                GoodFuncs.getScripts(['/vendor/avtomon/pdf.js/build/dist/build/pdf.min.js']);
+                Utils.GoodFuncs.getScripts(['/vendor/avtomon/pdf.js/build/dist/build/pdf.min.js']);
             }
 
             PDFJS.getDocument(iframeUrl)
