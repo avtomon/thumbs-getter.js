@@ -49,7 +49,7 @@ gulp.task('docs', function () {
     const jsdoc2md = require('jsdoc-to-markdown');
     const fs = require('fs');
 
-    const inputFile = 'dist/*.js';
+    const inputFile = 'dist/js/*.js';
 
     const templateData = jsdoc2md.getTemplateDataSync({ files: inputFile });
 
