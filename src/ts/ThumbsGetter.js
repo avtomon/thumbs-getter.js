@@ -1,9 +1,9 @@
 "use strict";
-// noinspection TypeScriptPreferShortImport
-import { PDFJS } from "./@types/pdfjs-dist/index";
+/// <reference path="./@types/pdfjs-dist/index.d.ts" />
+import '../../../vendor/avtomon/pdf.js/build/dist/build/pdf.min.js';
+import { PDFJS } from './@types/pdfjs-dist/index';
 export var ImageGenerator;
 (function (ImageGenerator) {
-    var GoodFuncs = Utils.GoodFuncs;
     /**
      * Получение превью из картинки, видео или PDF
      */
@@ -118,9 +118,6 @@ export var ImageGenerator;
             }
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
-            if (typeof PDFJS === "undefined") {
-                GoodFuncs.getScripts(['/vendor/avtomon/pdf.js/build/dist/build/pdf.min.js']);
-            }
             PDFJS.getDocument(iframeUrl)
                 .then(function (pdf) {
                 pdf.getPage(1).then(function (page) {

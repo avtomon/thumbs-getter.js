@@ -1,8 +1,7 @@
 "use strict";
 
-// noinspection TypeScriptPreferShortImport
-import {PDFJS, PDFPageViewport} from "./@types/pdfjs-dist/index";
-import {Utils} from "../../../GoodFuncs.js/src/ts/GoodFuncs.js";
+import '../../../../../node_modules/pdfjs-dist/build/pdf.min.js';
+import {PDFJSStatic, PDFPageViewport, PDFRenderParams} from './@types/pdfjs-dist/index';
 
 export namespace ImageGenerator {
 
@@ -47,6 +46,8 @@ export namespace ImageGenerator {
         imageQuality?: number;
     }
 
+    let PDFJS: PDFJSStatic;
+
     /**
      * Получение превью из картинки, видео или PDF
      */
@@ -64,8 +65,8 @@ export namespace ImageGenerator {
             settings: IThumbsSettings
         ): { height: number, width: number } {
 
-            let elementHeight = this.height,
-                elementWidth = this.width;
+            let elementHeight: number = this.height,
+                elementWidth: number = this.width;
 
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;
@@ -112,8 +113,8 @@ export namespace ImageGenerator {
                 imageQuality: 0.9
             }): HTMLCanvasElement | null {
 
-            let canvas = document.createElement('canvas'),
-                ctx = canvas.getContext('2d'),
+            let canvas: HTMLCanvasElement = document.createElement('canvas'),
+                ctx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
                 URL = window.URL || window['webkitURL'],
 
                 imgLoadHandler = function () {
@@ -162,6 +163,7 @@ export namespace ImageGenerator {
                 imageQuality: 0.9
             }): HTMLCanvasElement | null {
             let canvas = document.createElement('canvas'),
+                ctx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
                 URL = window.URL || window['webkitURL'],
 
                 videoLoadHandler = function (): void {
@@ -172,7 +174,7 @@ export namespace ImageGenerator {
 
                     canvas.width = newWidth;
                     canvas.height = newHeight;
-                    canvas.getContext('2d').drawImage(this, 0, 0, newWidth, newHeight);
+                    ctx.drawImage(this, 0, 0, newWidth, newHeight);
 
                     canvas.toBlob(function (blob): void {
 
@@ -221,10 +223,6 @@ export namespace ImageGenerator {
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
 
-            if (typeof PDFJS === "undefined") {
-                Utils.GoodFuncs.getScripts(['/vendor/avtomon/pdf.js/build/dist/build/pdf.min.js']);
-            }
-
             PDFJS.getDocument(iframeUrl)
                 .then(function (pdf) {
                     pdf.getPage(1).then(function (page) {
@@ -238,10 +236,10 @@ export namespace ImageGenerator {
                         canvas.width = newWidth;
                         canvas.height = newHeight;
 
-                        let renderContext = {
+                        let renderContext: PDFRenderParams = {
                             canvasContext: canvas.getContext('2d'),
                             viewport: viewport
-                        };
+                        } as PDFRenderParams;
 
                         page.render(renderContext).then(function () {
                             canvas.toBlob(function (blob) {
