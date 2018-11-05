@@ -1,8 +1,4 @@
 {
-    "name": "avtomon/ThumbsGetter.js",
-    "description": "Script for generate thumb from image in browser",
-    "minimum-stability": "dev",
-    "config": {
-	"process-timeout": 1800
-    }
+    "name": "avtomon/thumbs-getter.js",
+    "description": "Script for generate thumb from image in browser"
 }
