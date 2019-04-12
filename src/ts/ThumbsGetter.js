@@ -1,9 +1,8 @@
 "use strict";
-/// <reference path="./@types/pdfjs-dist/index.d.ts" />
-import '../../../vendor/avtomon/pdf.js/build/dist/build/pdf.min.js';
-import { PDFJS } from './@types/pdfjs-dist/index';
+import '../../../../../node_modules/pdfjs-dist/build/pdf.min.js';
 export var ImageGenerator;
 (function (ImageGenerator) {
+    let PDFJS;
     /**
      * Получение превью из картинки, видео или PDF
      */
@@ -81,11 +80,11 @@ export var ImageGenerator;
         static handleVideoSelect(file, video, toBlobCallback, settings = {
             imageQuality: 0.9
         }) {
-            let canvas = document.createElement('canvas'), URL = window.URL || window['webkitURL'], videoLoadHandler = function () {
+            let canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'), URL = window.URL || window['webkitURL'], videoLoadHandler = function () {
                 let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(this, settings);
                 canvas.width = newWidth;
                 canvas.height = newHeight;
-                canvas.getContext('2d').drawImage(this, 0, 0, newWidth, newHeight);
+                ctx.drawImage(this, 0, 0, newWidth, newHeight);
                 canvas.toBlob(function (blob) {
                     video.currentTime = 0;
                     toBlobCallback(blob, canvas, video, file);
