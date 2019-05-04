@@ -1,5 +1,5 @@
 "use strict";
-import '../../../../../node_modules/pdfjs-dist/build/pdf.min.js';
+import { Utils } from "../../../good-funcs.js/dist/js/GoodFuncs.js";
 export var ImageGenerator;
 (function (ImageGenerator) {
     let PDFJS;
@@ -108,7 +108,7 @@ export var ImageGenerator;
          *
          * @returns {HTMLCanvasElement | null}
          */
-        static handlePdfSelect(file, iframe, toBlobCallback, settings = {
+        static async handlePdfSelect(file, iframe, toBlobCallback, settings = {
             imageQuality: 0.9
         }) {
             let canvas = document.createElement('canvas'), URL = window.URL || window['webkitURL'];
@@ -117,6 +117,7 @@ export var ImageGenerator;
             }
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
+            await Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js'])[0];
             PDFJS.getDocument(iframeUrl)
                 .then(function (pdf) {
                 pdf.getPage(1).then(function (page) {

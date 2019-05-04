@@ -1,5 +1,13 @@
 "use strict";
-import '../../../../../node_modules/pdfjs-dist/build/pdf.min.js';
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { Utils } from "../../../good-funcs.js/dist/js/GoodFuncs.js";
 export var ImageGenerator;
 (function (ImageGenerator) {
     let PDFJS;
@@ -111,31 +119,34 @@ export var ImageGenerator;
         static handlePdfSelect(file, iframe, toBlobCallback, settings = {
             imageQuality: 0.9
         }) {
-            let canvas = document.createElement('canvas'), URL = window.URL || window['webkitURL'];
-            if (!URL) {
-                return null;
-            }
-            let iframeUrl = URL.createObjectURL(file);
-            iframe.src = iframeUrl;
-            PDFJS.getDocument(iframeUrl)
-                .then(function (pdf) {
-                pdf.getPage(1).then(function (page) {
-                    let viewport = page.getViewport(1);
-                    let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(viewport, settings);
-                    canvas.width = newWidth;
-                    canvas.height = newHeight;
-                    let renderContext = {
-                        canvasContext: canvas.getContext('2d'),
-                        viewport: viewport
-                    };
-                    page.render(renderContext).then(function () {
-                        canvas.toBlob(function (blob) {
-                            toBlobCallback(blob, canvas, iframe);
-                        }, 'image/jpeg', settings.imageQuality);
+            return __awaiter(this, void 0, void 0, function* () {
+                let canvas = document.createElement('canvas'), URL = window.URL || window['webkitURL'];
+                if (!URL) {
+                    return null;
+                }
+                let iframeUrl = URL.createObjectURL(file);
+                iframe.src = iframeUrl;
+                yield Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js'])[0];
+                PDFJS.getDocument(iframeUrl)
+                    .then(function (pdf) {
+                    pdf.getPage(1).then(function (page) {
+                        let viewport = page.getViewport(1);
+                        let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(viewport, settings);
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+                        let renderContext = {
+                            canvasContext: canvas.getContext('2d'),
+                            viewport: viewport
+                        };
+                        page.render(renderContext).then(function () {
+                            canvas.toBlob(function (blob) {
+                                toBlobCallback(blob, canvas, iframe);
+                            }, 'image/jpeg', settings.imageQuality);
+                        });
                     });
                 });
+                return canvas;
             });
-            return canvas;
         }
     }
     ImageGenerator.ThumbsGetter = ThumbsGetter;
