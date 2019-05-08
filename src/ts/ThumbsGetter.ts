@@ -65,8 +65,8 @@ export namespace ImageGenerator {
             settings: IThumbsSettings
         ): { height: number, width: number } {
 
-            let elementHeight: number = this.height,
-                elementWidth: number = this.width;
+            let elementHeight: number = this.height || this.videoHeight,
+                elementWidth: number = this.width || this.videoWidth;
 
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;

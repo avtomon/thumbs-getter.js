@@ -15,7 +15,7 @@ export var ImageGenerator;
          * @returns {Dimensions}
          */
         static getDimensions(settings) {
-            let elementHeight = this.height, elementWidth = this.width;
+            let elementHeight = this.height || this.videoHeight, elementWidth = this.width || this.videoWidth;
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;
             }
