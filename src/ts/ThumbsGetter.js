@@ -2,7 +2,6 @@
 import { Utils } from "../../../good-funcs.js/dist/js/GoodFuncs.js";
 export var ImageGenerator;
 (function (ImageGenerator) {
-    let PDFJS;
     /**
      * Получение превью из картинки, видео или PDF
      */
@@ -117,8 +116,8 @@ export var ImageGenerator;
             }
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
-            await Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js'])[0];
-            PDFJS.getDocument(iframeUrl)
+            await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
+            pdfjsLib.getDocument(iframeUrl)
                 .then(function (pdf) {
                 pdf.getPage(1).then(function (page) {
                     let viewport = page.getViewport(1);

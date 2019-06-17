@@ -46,8 +46,6 @@ export namespace ImageGenerator {
         imageQuality?: number;
     }
 
-    let PDFJS: PDFJSStatic;
-
     /**
      * Получение превью из картинки, видео или PDF
      */
@@ -223,9 +221,9 @@ export namespace ImageGenerator {
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
 
-            await Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js'])[0];
+            await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
 
-            PDFJS.getDocument(iframeUrl)
+            pdfjsLib.getDocument(iframeUrl)
                 .then(function (pdf) {
                     pdf.getPage(1).then(function (page) {
                         let viewport: PDFPageViewport = page.getViewport(1);
