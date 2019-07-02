@@ -140,4 +140,3 @@ export var ImageGenerator;
     }
     ImageGenerator.ThumbsGetter = ThumbsGetter;
 })(ImageGenerator || (ImageGenerator = {}));
-//# sourceMappingURL=ThumbsGetter.js.map
