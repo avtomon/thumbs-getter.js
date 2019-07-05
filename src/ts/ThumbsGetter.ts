@@ -1,6 +1,6 @@
 "use strict";
 
-import {PDFJSStatic, PDFPageViewport, PDFRenderParams} from './@types/pdfjs-dist/index';
+import {PDFPageViewport, PDFRenderParams} from './@types/pdfjs-dist/index';
 import {Utils} from "../../../good-funcs.js/dist/js/GoodFuncs.js";
 
 export namespace ImageGenerator {
@@ -8,22 +8,22 @@ export namespace ImageGenerator {
     /**
      * Объект размеров изображения
      */
-    type Dimensions = {height: number; width: number};
+    type Dimensions = { height : number; width : number };
 
     /**
      * Сигнатура обработчика получения превью PDF-файла
      */
-    type PDFToBlobCallback = (result: (Blob | null), canvas: HTMLCanvasElement, iframe: HTMLIFrameElement) => void;
+    type PDFToBlobCallback = (result : (Blob | null), canvas : HTMLCanvasElement, iframe : HTMLIFrameElement) => void;
 
     /**
      * Сигнатура обработчика получения превью видео
      */
-    type VideoToBlobCallback = (result: Blob | null, canvas: HTMLCanvasElement, video: HTMLVideoElement, file: File) => void;
+    type VideoToBlobCallback = (result : Blob | null, canvas : HTMLCanvasElement, video : HTMLVideoElement, file : File) => void;
 
     /**
      * Сигнатура обработчика получения превью изображения
      */
-    type ImageToBlobCallback = (result: (Blob | null)) => void;
+    type ImageToBlobCallback = (result : (Blob | null)) => void;
 
     /**
      * Интерфейс настроек изображения
@@ -33,17 +33,17 @@ export namespace ImageGenerator {
         /**
          * Максимальная высота
          */
-        maxHeight?: number;
+        maxHeight? : number;
 
         /**
          * Максимальная ширина
          */
-        maxWidth?: number;
+        maxWidth? : number;
 
         /**
          * Качество выходного изображения
          */
-        imageQuality?: number;
+        imageQuality? : number;
     }
 
     /**
@@ -59,12 +59,12 @@ export namespace ImageGenerator {
          * @returns {Dimensions}
          */
         public static getDimensions(
-            this: HTMLImageElement | HTMLVideoElement | PDFPageViewport,
-            settings: IThumbsSettings
-        ): { height: number, width: number } {
+            this : HTMLImageElement | HTMLVideoElement | PDFPageViewport,
+            settings : IThumbsSettings
+        ) : { height : number, width : number } {
 
-            let elementHeight: number = this.height || this.videoHeight,
-                elementWidth: number = this.width || this.videoWidth;
+            let elementHeight : number = this.height || this.videoHeight,
+                elementWidth : number = this.width || this.videoWidth;
 
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;
@@ -74,8 +74,8 @@ export namespace ImageGenerator {
                 settings.maxWidth = elementWidth;
             }
 
-            let newHeight: number,
-                newWidth: number;
+            let newHeight : number,
+                newWidth : number;
 
             if (this.height > this.width) {
                 newHeight = settings.maxHeight;
@@ -102,25 +102,25 @@ export namespace ImageGenerator {
          * @returns {HTMLCanvasElement | null}
          */
         public static handleImageSelect(
-            file: File,
-            image: HTMLImageElement,
-            toBlobCallback: ImageToBlobCallback,
-            settings: IThumbsSettings = {
+            file : File,
+            image : HTMLImageElement,
+            toBlobCallback : ImageToBlobCallback,
+            settings : IThumbsSettings = {
                 maxHeight: 100,
                 maxWidth: 100,
                 imageQuality: 0.9
-            }): HTMLCanvasElement | null {
+            }) : HTMLCanvasElement | null {
 
-            let canvas: HTMLCanvasElement = document.createElement('canvas'),
-                ctx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
+            let canvas : HTMLCanvasElement = document.createElement('canvas'),
+                ctx : CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
                 URL = window.URL || window['webkitURL'],
 
                 imgLoadHandler = function () {
 
                     let {
-                            width: newWidth,
-                            height: newHeight
-                        } = ThumbsGetter.getDimensions.call(this, settings);
+                        width: newWidth,
+                        height: newHeight
+                    } = ThumbsGetter.getDimensions.call(this, settings);
 
                     canvas.width = newWidth;
                     canvas.height = newHeight;
@@ -154,17 +154,17 @@ export namespace ImageGenerator {
          * @returns {HTMLCanvasElement | null}
          */
         public static handleVideoSelect(
-            file: File,
-            video: HTMLVideoElement,
-            toBlobCallback: VideoToBlobCallback,
-            settings: IThumbsSettings = {
+            file : File,
+            video : HTMLVideoElement,
+            toBlobCallback : VideoToBlobCallback,
+            settings : IThumbsSettings = {
                 imageQuality: 0.9
-            }): HTMLCanvasElement | null {
+            }) : HTMLCanvasElement | null {
             let canvas = document.createElement('canvas'),
-                ctx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
+                ctx : CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D,
                 URL = window.URL || window['webkitURL'],
 
-                videoLoadHandler = function (): void {
+                videoLoadHandler = function () : void {
                     let {
                         width: newWidth,
                         height: newHeight
@@ -174,7 +174,7 @@ export namespace ImageGenerator {
                     canvas.height = newHeight;
                     ctx.drawImage(this, 0, 0, newWidth, newHeight);
 
-                    canvas.toBlob(function (blob): void {
+                    canvas.toBlob(function (blob) : void {
 
                         video.currentTime = 0;
                         toBlobCallback(blob, canvas, video, file);
@@ -204,12 +204,12 @@ export namespace ImageGenerator {
          * @returns {HTMLCanvasElement | null}
          */
         public static async handlePdfSelect(
-            file: File,
-            iframe: HTMLIFrameElement,
-            toBlobCallback: PDFToBlobCallback,
-            settings: IThumbsSettings = {
+            file : File,
+            iframe : HTMLIFrameElement,
+            toBlobCallback : PDFToBlobCallback,
+            settings : IThumbsSettings = {
                 imageQuality: 0.9
-            }): Promise<HTMLCanvasElement | null> {
+            }) : Promise<HTMLCanvasElement | null> {
 
             let canvas = document.createElement('canvas'),
                 URL = window.URL || window['webkitURL'];
@@ -223,31 +223,33 @@ export namespace ImageGenerator {
 
             await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
 
-            pdfjsLib.getDocument(iframeUrl)
-                .then(function (pdf) {
-                    pdf.getPage(1).then(function (page) {
-                        let viewport: PDFPageViewport = page.getViewport(1);
+            setTimeout(function () {
+                pdfjsLib.getDocument(iframeUrl)
+                    .then(function (pdf) {
+                        pdf.getPage(1).then(function (page) {
+                            let viewport : PDFPageViewport = page.getViewport(1);
 
-                        let {
-                            width: newWidth,
-                            height: newHeight
-                        } = ThumbsGetter.getDimensions.call(viewport, settings);
+                            let {
+                                width: newWidth,
+                                height: newHeight
+                            } = ThumbsGetter.getDimensions.call(viewport, settings);
 
-                        canvas.width = newWidth;
-                        canvas.height = newHeight;
+                            canvas.width = newWidth;
+                            canvas.height = newHeight;
 
-                        let renderContext: PDFRenderParams = {
-                            canvasContext: canvas.getContext('2d'),
-                            viewport: viewport
-                        } as PDFRenderParams;
+                            let renderContext : PDFRenderParams = {
+                                canvasContext: canvas.getContext('2d'),
+                                viewport: viewport
+                            } as PDFRenderParams;
 
-                        page.render(renderContext).then(function () {
-                            canvas.toBlob(function (blob) {
-                                toBlobCallback(blob, canvas, iframe);
-                            }, 'image/jpeg', settings.imageQuality);
+                            page.render(renderContext).then(function () {
+                                canvas.toBlob(function (blob) {
+                                    toBlobCallback(blob, canvas, iframe);
+                                }, 'image/jpeg', settings.imageQuality);
+                            });
                         });
                     });
-                });
+            }, 200);
 
             return canvas;
         }

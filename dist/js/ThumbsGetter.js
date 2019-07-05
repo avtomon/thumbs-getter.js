@@ -117,24 +117,26 @@ export var ImageGenerator;
             let iframeUrl = URL.createObjectURL(file);
             iframe.src = iframeUrl;
             await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
-            pdfjsLib.getDocument(iframeUrl)
-                .then(function (pdf) {
-                pdf.getPage(1).then(function (page) {
-                    let viewport = page.getViewport(1);
-                    let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(viewport, settings);
-                    canvas.width = newWidth;
-                    canvas.height = newHeight;
-                    let renderContext = {
-                        canvasContext: canvas.getContext('2d'),
-                        viewport: viewport
-                    };
-                    page.render(renderContext).then(function () {
-                        canvas.toBlob(function (blob) {
-                            toBlobCallback(blob, canvas, iframe);
-                        }, 'image/jpeg', settings.imageQuality);
+            setTimeout(function () {
+                pdfjsLib.getDocument(iframeUrl)
+                    .then(function (pdf) {
+                    pdf.getPage(1).then(function (page) {
+                        let viewport = page.getViewport(1);
+                        let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(viewport, settings);
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+                        let renderContext = {
+                            canvasContext: canvas.getContext('2d'),
+                            viewport: viewport
+                        };
+                        page.render(renderContext).then(function () {
+                            canvas.toBlob(function (blob) {
+                                toBlobCallback(blob, canvas, iframe);
+                            }, 'image/jpeg', settings.imageQuality);
+                        });
                     });
                 });
-            });
+            }, 200);
             return canvas;
         }
     }
