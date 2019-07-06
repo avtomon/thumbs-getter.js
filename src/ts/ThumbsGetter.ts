@@ -13,7 +13,7 @@ export namespace ImageGenerator {
     /**
      * Сигнатура обработчика получения превью PDF-файла
      */
-    type PDFToBlobCallback = (result : (Blob | null), canvas : HTMLCanvasElement, iframe : HTMLIFrameElement) => void;
+    type PDFToBlobCallback = (result : (Blob | null), canvas : HTMLCanvasElement, iframe : HTMLIFrameElement, file : File) => void;
 
     /**
      * Сигнатура обработчика получения превью видео
@@ -63,8 +63,8 @@ export namespace ImageGenerator {
             settings : IThumbsSettings
         ) : { height : number, width : number } {
 
-            let elementHeight : number = this.height || this.videoHeight,
-                elementWidth : number = this.width || this.videoWidth;
+            let elementHeight : number = this.height || this['videoHeight'],
+                elementWidth : number = this.width || this['videoWidth'];
 
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;
@@ -244,7 +244,7 @@ export namespace ImageGenerator {
 
                             page.render(renderContext).then(function () {
                                 canvas.toBlob(function (blob) {
-                                    toBlobCallback(blob, canvas, iframe);
+                                    toBlobCallback(blob, canvas, iframe, file);
                                 }, 'image/jpeg', settings.imageQuality);
                             });
                         });

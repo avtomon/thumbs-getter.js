@@ -14,7 +14,7 @@ export var ImageGenerator;
          * @returns {Dimensions}
          */
         static getDimensions(settings) {
-            let elementHeight = this.height || this.videoHeight, elementWidth = this.width || this.videoWidth;
+            let elementHeight = this.height || this['videoHeight'], elementWidth = this.width || this['videoWidth'];
             if (!settings.maxHeight) {
                 settings.maxHeight = elementHeight;
             }
@@ -131,7 +131,7 @@ export var ImageGenerator;
                         };
                         page.render(renderContext).then(function () {
                             canvas.toBlob(function (blob) {
-                                toBlobCallback(blob, canvas, iframe);
+                                toBlobCallback(blob, canvas, iframe, file);
                             }, 'image/jpeg', settings.imageQuality);
                         });
                     });
