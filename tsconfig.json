@@ -2,8 +2,9 @@
     "compileOnSave": true,
     "compilerOptions": {
         "target": "es2017",
-        "sourceMap": true,
+        "sourceMap": false,
         "alwaysStrict": true,
+        "declaration": true,
         "locale": "ru",
         "strictNullChecks": true
     }
