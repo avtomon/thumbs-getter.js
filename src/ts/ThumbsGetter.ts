@@ -1,6 +1,5 @@
 "use strict";
 
-import {PDFPageViewport, PDFRenderParams} from './@types/pdfjs-dist/index';
 import {Utils} from "../../../good-funcs.js/dist/js/GoodFuncs.js";
 
 export namespace ImageGenerator {
@@ -59,7 +58,7 @@ export namespace ImageGenerator {
          * @returns {Dimensions}
          */
         public static getDimensions(
-            this : HTMLImageElement | HTMLVideoElement | PDFPageViewport,
+            this : HTMLImageElement | HTMLVideoElement,
             settings : IThumbsSettings
         ) : { height : number, width : number } {
 
@@ -224,10 +223,10 @@ export namespace ImageGenerator {
             await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
 
             setTimeout(function () {
-                pdfjsLib.getDocument(iframeUrl)
+                pdfjsLib.getDocument(iframeUrl).promise
                     .then(function (pdf) {
                         pdf.getPage(1).then(function (page) {
-                            let viewport : PDFPageViewport = page.getViewport(1);
+                            let viewport = page.getViewport({scale: 1});
 
                             let {
                                 width: newWidth,
@@ -237,12 +236,12 @@ export namespace ImageGenerator {
                             canvas.width = newWidth;
                             canvas.height = newHeight;
 
-                            let renderContext : PDFRenderParams = {
+                            let renderContext = {
                                 canvasContext: canvas.getContext('2d'),
                                 viewport: viewport
-                            } as PDFRenderParams;
+                            };
 
-                            page.render(renderContext).then(function () {
+                            page.render(renderContext).promise.then(function () {
                                 canvas.toBlob(function (blob) {
                                     toBlobCallback(blob, canvas, iframe, file);
                                 }, 'image/jpeg', settings.imageQuality);

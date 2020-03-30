@@ -1,4 +1,3 @@
-import { PDFPageViewport } from './@types/pdfjs-dist/index';
 export declare namespace ImageGenerator {
     /**
      * Сигнатура обработчика получения превью PDF-файла
@@ -40,7 +39,7 @@ export declare namespace ImageGenerator {
          *
          * @returns {Dimensions}
          */
-        static getDimensions(this: HTMLImageElement | HTMLVideoElement | PDFPageViewport, settings: IThumbsSettings): {
+        static getDimensions(this: HTMLImageElement | HTMLVideoElement, settings: IThumbsSettings): {
             height: number;
             width: number;
         };

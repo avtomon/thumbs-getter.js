@@ -118,10 +118,10 @@ export var ImageGenerator;
             iframe.src = iframeUrl;
             await Promise.all(Utils.GoodFuncs.getScripts(['/vendor/bower-asset/pdfjs-dist/build/pdf.js']));
             setTimeout(function () {
-                pdfjsLib.getDocument(iframeUrl)
+                pdfjsLib.getDocument(iframeUrl).promise
                     .then(function (pdf) {
                     pdf.getPage(1).then(function (page) {
-                        let viewport = page.getViewport(1);
+                        let viewport = page.getViewport({ scale: 1 });
                         let { width: newWidth, height: newHeight } = ThumbsGetter.getDimensions.call(viewport, settings);
                         canvas.width = newWidth;
                         canvas.height = newHeight;
@@ -129,7 +129,7 @@ export var ImageGenerator;
                             canvasContext: canvas.getContext('2d'),
                             viewport: viewport
                         };
-                        page.render(renderContext).then(function () {
+                        page.render(renderContext).promise.then(function () {
                             canvas.toBlob(function (blob) {
                                 toBlobCallback(blob, canvas, iframe, file);
                             }, 'image/jpeg', settings.imageQuality);
