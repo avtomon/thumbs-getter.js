@@ -2,15 +2,15 @@ export declare namespace ImageGenerator {
     /**
      * Сигнатура обработчика получения превью PDF-файла
      */
-    type PDFToBlobCallback = (result: (Blob | null), canvas: HTMLCanvasElement, iframe: HTMLIFrameElement, file: File) => void;
+    type PDFToBlobCallback = (result: File | null, canvas: HTMLCanvasElement, iframe: HTMLIFrameElement, file: File) => void;
     /**
      * Сигнатура обработчика получения превью видео
      */
-    type VideoToBlobCallback = (result: Blob | null, canvas: HTMLCanvasElement, video: HTMLVideoElement, file: File) => void;
+    type VideoToBlobCallback = (result: File | null, canvas: HTMLCanvasElement, video: HTMLVideoElement, file: File) => void;
     /**
      * Сигнатура обработчика получения превью изображения
      */
-    type ImageToBlobCallback = (result: (Blob | null)) => void;
+    type ImageToBlobCallback = (result: File | null) => void;
     /**
      * Интерфейс настроек изображения
      */
@@ -43,6 +43,14 @@ export declare namespace ImageGenerator {
             height: number;
             width: number;
         };
+        /**
+         * Генерация имени полученного изображения
+         *
+         * @param {string} filename
+         *
+         * @returns {string}
+         */
+        static getImageName(filename: string): string;
         /**
          * Формирование изображения из загруженной картинки
          *

@@ -12,17 +12,17 @@ export namespace ImageGenerator {
     /**
      * Сигнатура обработчика получения превью PDF-файла
      */
-    type PDFToBlobCallback = (result : (Blob | null), canvas : HTMLCanvasElement, iframe : HTMLIFrameElement, file : File) => void;
+    type PDFToBlobCallback = (result : File | null, canvas : HTMLCanvasElement, iframe : HTMLIFrameElement, file : File) => void;
 
     /**
      * Сигнатура обработчика получения превью видео
      */
-    type VideoToBlobCallback = (result : Blob | null, canvas : HTMLCanvasElement, video : HTMLVideoElement, file : File) => void;
+    type VideoToBlobCallback = (result : File | null, canvas : HTMLCanvasElement, video : HTMLVideoElement, file : File) => void;
 
     /**
      * Сигнатура обработчика получения превью изображения
      */
-    type ImageToBlobCallback = (result : (Blob | null)) => void;
+    type ImageToBlobCallback = (result : File | null) => void;
 
     /**
      * Интерфейс настроек изображения
@@ -91,6 +91,20 @@ export namespace ImageGenerator {
         }
 
         /**
+         * Генерация имени полученного изображения
+         *
+         * @param {string} filename
+         *
+         * @returns {string}
+         */
+        public static getImageName(filename : string) : string {
+            let posterArray : string[] = filename.split('.');
+            posterArray.splice(-1, 1);
+
+            return posterArray.join('.') + '.jpg';
+        }
+
+        /**
          * Формирование изображения из загруженной картинки
          *
          * @param {File} file - загруженный файл
@@ -127,7 +141,9 @@ export namespace ImageGenerator {
 
                     ctx.drawImage(this, 0, 0, newWidth, newHeight);
 
-                    canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+                    canvas.toBlob(function (blob : Blob | null) {
+                        toBlobCallback(blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null);
+                    }, 'image/jpeg', settings.imageQuality);
 
                     URL.revokeObjectURL(this.src);
                 };
@@ -173,10 +189,15 @@ export namespace ImageGenerator {
                     canvas.height = newHeight;
                     ctx.drawImage(this, 0, 0, newWidth, newHeight);
 
-                    canvas.toBlob(function (blob) : void {
+                    canvas.toBlob(function (blob : Blob | null) : void {
 
                         video.currentTime = 0;
-                        toBlobCallback(blob, canvas, video, file);
+                        toBlobCallback(
+                            blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null,
+                            canvas,
+                            video,
+                            file
+                        );
                     }, 'image/jpeg', settings.imageQuality);
                 };
 
@@ -242,8 +263,13 @@ export namespace ImageGenerator {
                             };
 
                             page.render(renderContext).promise.then(function () {
-                                canvas.toBlob(function (blob) {
-                                    toBlobCallback(blob, canvas, iframe, file);
+                                canvas.toBlob(function (blob : Blob | null) {
+                                    toBlobCallback(
+                                        blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null,
+                                        canvas,
+                                        iframe,
+                                        file
+                                    );
                                 }, 'image/jpeg', settings.imageQuality);
                             });
                         });

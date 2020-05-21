@@ -36,6 +36,18 @@ export var ImageGenerator;
             };
         }
         /**
+         * Генерация имени полученного изображения
+         *
+         * @param {string} filename
+         *
+         * @returns {string}
+         */
+        static getImageName(filename) {
+            let posterArray = filename.split('.');
+            posterArray.splice(-1, 1);
+            return posterArray.join('.') + '.jpg';
+        }
+        /**
          * Формирование изображения из загруженной картинки
          *
          * @param {File} file - загруженный файл
@@ -56,7 +68,9 @@ export var ImageGenerator;
                 canvas.height = newHeight;
                 canvas.style.display = 'block';
                 ctx.drawImage(this, 0, 0, newWidth, newHeight);
-                canvas.toBlob(toBlobCallback, 'image/jpeg', settings.imageQuality);
+                canvas.toBlob(function (blob) {
+                    toBlobCallback(blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null);
+                }, 'image/jpeg', settings.imageQuality);
                 URL.revokeObjectURL(this.src);
             };
             if (!URL) {
@@ -86,7 +100,7 @@ export var ImageGenerator;
                 ctx.drawImage(this, 0, 0, newWidth, newHeight);
                 canvas.toBlob(function (blob) {
                     video.currentTime = 0;
-                    toBlobCallback(blob, canvas, video, file);
+                    toBlobCallback(blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null, canvas, video, file);
                 }, 'image/jpeg', settings.imageQuality);
             };
             if (!URL) {
@@ -131,7 +145,7 @@ export var ImageGenerator;
                         };
                         page.render(renderContext).promise.then(function () {
                             canvas.toBlob(function (blob) {
-                                toBlobCallback(blob, canvas, iframe, file);
+                                toBlobCallback(blob ? new File([blob], ThumbsGetter.getImageName(file.name)) : null, canvas, iframe, file);
                             }, 'image/jpeg', settings.imageQuality);
                         });
                     });
